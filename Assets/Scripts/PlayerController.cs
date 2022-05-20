@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D playerRb;
     private Camera mainCamera;
     private GameManager gameManager;
+    private PlayerInput playerInput;
+    private InputAction jumpAction;
     private bool outOfBoundsVelocitySet = false;
     private int counter = 0;
 
@@ -18,7 +20,11 @@ public class PlayerController : MonoBehaviour
     public float jumpForce = 20f;
 
     public GameObject deathParticlePrefab;
-    
+
+    private void Awake() {
+        
+    }
+
     void Start()
     {
         if (instance != null) {
@@ -28,6 +34,9 @@ public class PlayerController : MonoBehaviour
         instance = this;
 
         playerRb = GetComponent<Rigidbody2D>();
+        playerInput = GetComponent<PlayerInput>();
+        jumpAction = playerInput.actions["Jump"];
+        jumpAction.started += Jump;
         mainCamera = Camera.main;
         gameManager = GameManager.instance;
     }
@@ -35,15 +44,15 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Keyboard keyboard = Keyboard.current;
-        if (keyboard != null) {
+        //Keyboard keyboard = Keyboard.current;
+        //if (keyboard != null) {
 
-        }
+        //}
 
-        if (keyboard.spaceKey.wasPressedThisFrame && gameManager.IsGameStart()) {
-            Jump();
-            gameManager.PlayJumpSound();
-        }
+        //if (keyboard.spaceKey.wasPressedThisFrame && gameManager.IsGameStart()) {
+        //    Jump();
+            
+        //}
     }
 
     private void FixedUpdate() {
@@ -57,11 +66,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void Jump() {
-        //Debug.Log("Jumping with force " + jumpForce.ToString() + " and counter " + counter.ToString());
-        counter++;
-        playerRb.velocity = new Vector2(0, 0);
-        playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+    private void Jump(InputAction.CallbackContext context) {
+        if (gameManager.IsGameStart()) {
+            //Debug.Log("Jumping with force " + jumpForce.ToString() + " and counter " + counter.ToString());
+            gameManager.PlayJumpSound();
+            counter++;
+            playerRb.velocity = new Vector2(0, 0);
+            playerRb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+        }
     }
     private void ClampObjectIntoView() {
         float frustumPositionBottom = mainCamera.ViewportToWorldPoint(new Vector3(0, 0)).y;
