@@ -13,24 +13,25 @@ public class SpawnManager : MonoBehaviour
 
     public GameObject obstacle;
 
+    private bool active = false;
     private float randomPercentage;
     private float timer;
-    
 
     // Start is called before the first frame update
     void Start() {
         timer = spawnRate;
-        InstantiateObstacle();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Update timer
-        timer -= Time.deltaTime;
-        if (timer <= 0) {
-            InstantiateObstacle();
-            timer = spawnRate; // Reset timer
+        if (active) {
+            // Update timer
+            timer -= Time.deltaTime;
+            if (timer <= 0) {
+                InstantiateObstacle();
+                timer = spawnRate; // Reset timer
+            }
         }
     }
 
@@ -41,5 +42,15 @@ public class SpawnManager : MonoBehaviour
         newObstacle.transform.position = transform.position;
         ObstacleController obstacleController = newObstacle.GetComponent<ObstacleController>();
         obstacleController.setObstacleSize(freeZoneSize, randomPercentage);
+    }
+
+    public void SetActive(bool active) {
+        if (active) {
+            this.active = true;
+            InstantiateObstacle(); // Spawn one
+        } else {
+            this.active = false;
+            timer = spawnRate; // Reset Timer
+        }
     }
 }

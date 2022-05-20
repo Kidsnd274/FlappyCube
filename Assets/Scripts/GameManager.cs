@@ -6,12 +6,21 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance { get; private set; }
 
+    private static readonly float defaultTimerStart = 3.5f;
+
     public ScoreManager scoreManager;
+    public SpawnManager spawnManager;
+    public UIManager uiManager;
+    public PlayerController player;
+
+    private bool gameStart = false;
+    private bool timerStart = false;
+    private float timer = defaultTimerStart;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        StartGameTimer();
     }
     private void Awake() {
         if (instance != null && instance != this) {
@@ -25,13 +34,54 @@ public class GameManager : MonoBehaviour
         #endif
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    private void Update() {
+        if (timerStart) {
+            timer -= Time.deltaTime;
+            if (timer < 0) {
+                GameStart();
+                timerStart = false;
+                timer = defaultTimerStart;
+            } else {
+                UpdateTimerUI();
+            }
+        }
     }
 
+    public void GameStart() {
+        player.StartGame(); // Unfreeze player
+        gameStart = true;
+        uiManager.HideStartingTimerAndStartScore(); // Hides timer and shows score
+        UpdateScoreUI(); // Updates the score to 0
+        spawnManager.SetActive(true); // Start spawning obstacles
+    }
+
+    public void GameEnd() { // Obstacle should report Player death (or shld player report its own death)
+
+    }
+
+    // Timer methods
+    private void StartGameTimer() { // Starts countdown timer
+        timerStart = true;
+    }
+
+    private void UpdateTimerUI() {
+        int currentTime = Mathf.FloorToInt(timer);
+        uiManager.UpdateStartCountdownTimer(currentTime);
+    }
+
+    // Score methods
     public void AddToScore() {
         scoreManager.AddToScore();
+        int currentScore = scoreManager.getScore();
+        uiManager.UpdateScore(currentScore);
+    }
+
+    public void UpdateScoreUI() {
+        int currentScore = scoreManager.getScore();
+        uiManager.UpdateScore(currentScore);
+    }
+
+    public bool IsGameStart() {
+        return gameStart;
     }
 }

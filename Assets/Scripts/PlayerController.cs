@@ -32,7 +32,7 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        if (keyboard.spaceKey.wasPressedThisFrame) {
+        if (keyboard.spaceKey.wasPressedThisFrame && gameManager.IsGameStart()) {
             Jump();
         }
     }
@@ -87,5 +87,14 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "Obstacle") {
             gameManager.AddToScore();
         }
+    }
+
+    /**
+     * Unfreezes the player
+     */
+    public void StartGame() {
+        playerRb.constraints = RigidbodyConstraints2D.None;
+        playerRb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        playerRb.AddForce(Vector2.zero, ForceMode2D.Impulse); // Force update rb
     }
 }

@@ -6,7 +6,6 @@ using UnityEngine;
 public class ScoreManager : MonoBehaviour
 {
     private int score = 0;
-    public TMP_Text scoreText;
 
     // Start is called before the first frame update
     void Start()
@@ -20,12 +19,15 @@ public class ScoreManager : MonoBehaviour
         
     }
 
-    private void UpdateScore() {
-        scoreText.text = score.ToString();
-    }
-
     public void AddToScore() {
         score++;
-        UpdateScore();
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void ResetScore() {
+        score = 0;
     }
 }
