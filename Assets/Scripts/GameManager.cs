@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
 
     private static readonly float defaultTimerStart = 3.5f;
 
+    [HideInInspector]
+    public AudioManager audioManager;
     public ScoreManager scoreManager;
     public SpawnManager spawnManager;
     public UIManager uiManager;
@@ -20,11 +22,14 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        audioManager = AudioManager.instance;
         StartGameTimer();
     }
+
     private void Awake() {
         if (instance != null && instance != this) {
             Destroy(this);
+            return;
         } else {
             instance = this;
         }
@@ -58,6 +63,7 @@ public class GameManager : MonoBehaviour
 
     public void GameEnd() { // Obstacle should report Player death (or shld player report its own death)
         gameStart = false;
+        audioManager.Play("DeathSound");
         spawnManager.SetActive(false);
         uiManager.EndGame(scoreManager.getScore());
     }
@@ -69,6 +75,7 @@ public class GameManager : MonoBehaviour
         }
         scoreManager.ResetScore();
         Destroy(player.gameObject); // Recreate Player
+        PlayerController.instance = null;
         player = spawnManager.InstantiateNewPlayer().GetComponent<PlayerController>();
         StartGameTimer();
     }
@@ -86,6 +93,7 @@ public class GameManager : MonoBehaviour
     // Score methods
     public void AddToScore() {
         if (gameStart) {
+            audioManager.Play("ScoreSound");
             scoreManager.AddToScore();
             int currentScore = scoreManager.getScore();
             uiManager.UpdateScore(currentScore);
@@ -99,5 +107,9 @@ public class GameManager : MonoBehaviour
 
     public bool IsGameStart() {
         return gameStart;
+    }
+
+    public void PlayJumpSound() {
+        audioManager.Play("JumpSound");
     }
 }

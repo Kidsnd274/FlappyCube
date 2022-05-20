@@ -16,13 +16,14 @@ public class PlayerController : MonoBehaviour
 
     public float maxVelocity = 10f;
     public float jumpForce = 20f;
-    
 
-    // Start is called before the first frame update
+    public GameObject deathParticlePrefab;
+    
     void Start()
     {
         if (instance != null) {
             Destroy(instance.gameObject);
+            return;
         }
         instance = this;
 
@@ -41,6 +42,7 @@ public class PlayerController : MonoBehaviour
 
         if (keyboard.spaceKey.wasPressedThisFrame && gameManager.IsGameStart()) {
             Jump();
+            gameManager.PlayJumpSound();
         }
     }
 
@@ -109,6 +111,8 @@ public class PlayerController : MonoBehaviour
 
     public void KillPlayer() {
         Debug.Log("Player death");
+        GameObject deathParticle = Instantiate(deathParticlePrefab, gameObject.transform.position, gameObject.transform.rotation);
+        Destroy(deathParticle, 1f);
         gameManager.GameEnd();
     }
 }
