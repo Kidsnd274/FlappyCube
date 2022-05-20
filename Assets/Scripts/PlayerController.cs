@@ -21,8 +21,10 @@ public class PlayerController : MonoBehaviour
 
     public GameObject deathParticlePrefab;
 
-    private void Awake() {
-        
+    void Awake() {
+        playerInput = GetComponent<PlayerInput>();
+        jumpAction = playerInput.actions["Jump"];
+        jumpAction.started += Jump;
     }
 
     void Start()
@@ -34,9 +36,6 @@ public class PlayerController : MonoBehaviour
         instance = this;
 
         playerRb = GetComponent<Rigidbody2D>();
-        playerInput = GetComponent<PlayerInput>();
-        jumpAction = playerInput.actions["Jump"];
-        jumpAction.started += Jump;
         mainCamera = Camera.main;
         gameManager = GameManager.instance;
     }
@@ -55,6 +54,11 @@ public class PlayerController : MonoBehaviour
         //}
     }
 
+    private void OnDestroy() {
+        jumpAction.started -= Jump;
+    }
+
+
     private void FixedUpdate() {
         ClampObjectIntoView();
 
@@ -67,6 +71,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void Jump(InputAction.CallbackContext context) {
+        Debug.Log("Jump!");
         if (gameManager.IsGameStart()) {
             //Debug.Log("Jumping with force " + jumpForce.ToString() + " and counter " + counter.ToString());
             gameManager.PlayJumpSound();

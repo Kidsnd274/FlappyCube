@@ -49,4 +49,8 @@ public class UIManager : MonoBehaviour
         startCountdownText.gameObject.SetActive(true);
         gameManager.RestartGame();
     }
+
+    public void BackToMainMenu() {
+        gameManager.BackToMainMenu();
+    }
 }
