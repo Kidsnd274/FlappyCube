@@ -8,6 +8,7 @@ TagManager:
   - Obstacle
   - Destroyer
   - ObstacleThatKills
+  - ObstacleMain
   layers:
   - Default
   - TransparentFX

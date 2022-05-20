@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
                 GameStart();
                 timerStart = false;
                 timer = defaultTimerStart;
+                UpdateTimerUI();
             } else {
                 UpdateTimerUI();
             }
@@ -56,7 +57,20 @@ public class GameManager : MonoBehaviour
     }
 
     public void GameEnd() { // Obstacle should report Player death (or shld player report its own death)
+        gameStart = false;
+        spawnManager.SetActive(false);
+        uiManager.EndGame(scoreManager.getScore());
+    }
 
+    public void RestartGame() {
+        GameObject[] allObstacles = GameObject.FindGameObjectsWithTag("ObstacleMain");
+        foreach (GameObject obstacle in allObstacles) {
+            Destroy(obstacle);
+        }
+        scoreManager.ResetScore();
+        Destroy(player.gameObject); // Recreate Player
+        player = spawnManager.InstantiateNewPlayer().GetComponent<PlayerController>();
+        StartGameTimer();
     }
 
     // Timer methods
@@ -71,9 +85,11 @@ public class GameManager : MonoBehaviour
 
     // Score methods
     public void AddToScore() {
-        scoreManager.AddToScore();
-        int currentScore = scoreManager.getScore();
-        uiManager.UpdateScore(currentScore);
+        if (gameStart) {
+            scoreManager.AddToScore();
+            int currentScore = scoreManager.getScore();
+            uiManager.UpdateScore(currentScore);
+        }
     }
 
     public void UpdateScoreUI() {

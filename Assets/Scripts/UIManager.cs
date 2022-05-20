@@ -7,6 +7,8 @@ public class UIManager : MonoBehaviour
 {
     public TMP_Text scoreText;
     public TMP_Text startCountdownText;
+    public TMP_Text gameOverScore;
+    public GameObject gameOverObject;
 
     private GameManager gameManager;
 
@@ -34,5 +36,17 @@ public class UIManager : MonoBehaviour
         //startCountdownText.enabled = false; // or use
         startCountdownText.gameObject.SetActive(false);
         scoreText.gameObject.SetActive(true);
+    }
+
+    public void EndGame(int score) { // Hide score and show final score with retry button
+        scoreText.gameObject.SetActive(false);
+        gameOverScore.text = "Score: " + score.ToString();
+        gameOverObject.SetActive(true);
+    }
+
+    public void RestartGame() {
+        gameOverObject.SetActive(false);
+        startCountdownText.gameObject.SetActive(true);
+        gameManager.RestartGame();
     }
 }

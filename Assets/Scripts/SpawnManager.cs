@@ -12,6 +12,9 @@ public class SpawnManager : MonoBehaviour
     public float minHeightPercentage = 0.3f;
 
     public GameObject obstacle;
+    public GameObject player;
+
+    private static Vector3 playerDefaultPosition = new Vector3(-1.5f, 2, 0);
 
     private bool active = false;
     private float randomPercentage;
@@ -52,5 +55,11 @@ public class SpawnManager : MonoBehaviour
             this.active = false;
             timer = spawnRate; // Reset Timer
         }
+    }
+
+    public GameObject InstantiateNewPlayer() {
+        GameObject newPlayer = Instantiate(player);
+        newPlayer.transform.position = playerDefaultPosition; // Moves to default position
+        return newPlayer;
     }
 }

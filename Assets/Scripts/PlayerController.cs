@@ -6,6 +6,8 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController instance;
+
     private Rigidbody2D playerRb;
     private Camera mainCamera;
     private GameManager gameManager;
@@ -19,6 +21,11 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        if (instance != null) {
+            Destroy(instance.gameObject);
+        }
+        instance = this;
+
         playerRb = GetComponent<Rigidbody2D>();
         mainCamera = Camera.main;
         gameManager = GameManager.instance;
@@ -79,11 +86,13 @@ public class PlayerController : MonoBehaviour
     }
 
     private void OnCollisionEnter2D(Collision2D other) {
-
+        if (other.gameObject.tag == "ObstacleThatKills") {
+            KillPlayer();
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D other) {
-        Debug.Log("Player collided with something!");
+        //Debug.Log("Player collided with something!");
         if (other.gameObject.tag == "Obstacle") {
             gameManager.AddToScore();
         }
@@ -96,5 +105,10 @@ public class PlayerController : MonoBehaviour
         playerRb.constraints = RigidbodyConstraints2D.None;
         playerRb.constraints = RigidbodyConstraints2D.FreezeRotation;
         playerRb.AddForce(Vector2.zero, ForceMode2D.Impulse); // Force update rb
+    }
+
+    public void KillPlayer() {
+        Debug.Log("Player death");
+        gameManager.GameEnd();
     }
 }
